@@ -14,8 +14,45 @@ states = {
     Game: 1,
     Score: 2
 },
-bird = {},
-pipes = {};
+bird = {
+    x: 80,
+    y: 0,
+    frame: 0,
+    velocity: 0,
+    animation: [0, 1, 2, 1],
+    rotation: 0,
+    gravity: 0.25,
+    _jump: 4.6,
+
+    jump: function() {
+        this.velocity = -this._jump;
+    },
+
+    update: function() {
+        let n = currentState === states.Splash? 10: 5;
+        this.frame += frames % n === 0? 1: 0;
+        this.frame %= this.animation.length;
+
+        if(currentState === states.Splash) {
+            this.y = height - 280 + 5*Math.cos(frames/10);
+            this.rotation = 0;
+        }
+    },
+
+    draw: function(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+
+        let n = this.animation[this.frame];
+        s_bird[n].draw(ctx, -s_bird[n].width/2, -s_bird[n].height/2);
+        ctx.restore();
+    }
+},
+pipes = {
+    update: function() {},
+    draw: function() {}
+};
 
 function main() {
     canvas = document.createElement("canvas");
@@ -32,6 +69,8 @@ function main() {
     canvas.width = width;
     canvas.height = height;
     ctx = canvas.getContext("2d");
+
+    currentState = states.Splash;
 
     document.body.appendChild(canvas);
 
@@ -55,7 +94,11 @@ function run() {
 
 function update() {
     frames++;
+
     fgpos = (fgpos - 2) % 14;
+
+    bird.update();
+    pipes.update();
 }
 
 function render() {
@@ -63,6 +106,8 @@ function render() {
 
     s_bg.draw(ctx, 0, height - s_bg.height);
     s_bg.draw(ctx, s_bg.width, height - s_bg.height);
+
+    bird.draw(ctx);
 
     s_fg.draw(ctx, fgpos, height - s_fg.height)
     s_fg.draw(ctx, fgpos + s_fg.width, height - s_fg.height)
