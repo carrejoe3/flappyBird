@@ -14,6 +14,7 @@ states = {
     Game: 1,
     Score: 2
 },
+okbtn,
 bird = {
     x: 60,
     y: 0,
@@ -35,7 +36,7 @@ bird = {
         this.frame %= this.animation.length;
 
         if(splashState()) {
-            this.y = height - 280 + 5*Math.cos(frames/10);
+            this.y = height - 280 + 5*Math.cos(frames / 10);
             this.rotation = 0;
         } else {
             this.velocity += this.gravity;
@@ -51,7 +52,7 @@ bird = {
 
             if(this.velocity >= this._jump) {
                 this.frame = 1;
-                this.rotation = Math.min(Math.PI/2, this.rotation + 0.3);
+                this.rotation = Math.min(Math.PI / 2, this.rotation + 0.3);
             } else {
                 this.rotation = -0.3;
             }
@@ -64,7 +65,7 @@ bird = {
         ctx.rotate(this.rotation);
 
         let n = this.animation[this.frame];
-        s_bird[n].draw(ctx, -s_bird[n].width/2, -s_bird[n].height/2);
+        s_bird[n].draw(ctx, -s_bird[n].width / 2, -s_bird[n].height / 2);
 
         //hitbox debugging
         // ctx.fillStyle = 'red';
@@ -135,16 +136,32 @@ pipes = {
 };
 
 function onPress(evt) {
+
     switch(currentState) {
+
         case states.Splash:
             currentState = states.Game;
             bird.jump();
             break;
+
         case states.Game:
             bird.jump();
             break;
+
         case states.Score:
-            break;
+			let mx = evt.offsetX, my = evt.offsetY;
+
+			if(mx == null || my == null) {
+				mx = evt.touches[0].clientX;
+				my = evt.touches[0].clientY;
+			}
+
+			if(okbtn.x < mx && mx < okbtn.x + okbtn.width && okbtn.y < my && my < okbtn.y + okbtn.height) {
+				pipes.reset();
+				currentState = states.Splash;
+				score = 0;
+			}
+			break;
     }
 }
 
@@ -178,12 +195,20 @@ function main() {
     img.onload = function() {
         initSprites(this);
         ctx.fillStyle = s_bg.color;
+
+        okbtn = {
+            x: (width - s_buttons.Ok.width) / 2,
+            y: height - 200,
+            width: s_buttons.Ok.width,
+            height: s_buttons.Ok.height,
+        }
+
         run();
     }
 }
 
 function run() {
-    var loop = function() {
+    let loop = function() {
         update();
         render();
         window.requestAnimationFrame(loop, canvas);
@@ -217,11 +242,17 @@ function render() {
     s_fg.draw(ctx, fgpos, height - s_fg.height);
     s_fg.draw(ctx, fgpos + s_fg.width, height - s_fg.height);
 
-    let width2 = width/2;
+    let width2 = width / 2;
 
     if(splashState()) {
-        s_splash.draw(ctx, width2 - s_splash.width/2, height - 300);
-        s_text.GetReady.draw(ctx, width2 - s_text.GetReady.width/2, height - 380);
+        s_splash.draw(ctx, width2 - s_splash.width / 2, height - 300);
+        s_text.GetReady.draw(ctx, width2 - s_text.GetReady.width / 2, height - 380);
+    }
+
+    if(scoreState()) {
+        s_text.GameOver.draw(ctx, width2 - s_text.GameOver.width / 2, height - 400);
+        s_score.draw(ctx, width2 - s_score.width / 2, height - 340);
+        s_buttons.Ok.draw(ctx, okbtn.x, okbtn.y);
     }
 }
 
