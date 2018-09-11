@@ -36,7 +36,7 @@ bird = {
         this.frame %= this.animation.length;
 
         if(splashState()) {
-            this.y = height - 280 + 5*Math.cos(frames / 10);
+            this.y = height - 280 + 5 * Math.cos(frames / 10);
             this.rotation = 0;
         } else {
             this.velocity += this.gravity;
@@ -259,7 +259,7 @@ function render() {
         s_buttons.Ok.draw(ctx, okbtn.x, okbtn.y);
 
         s_numberS.draw(ctx, width2 - 47, height - 304, score, null, 10);
-        s_numberS.draw(ctx, width2 - 47, height - 262, score, null, 10);
+        s_numberS.draw(ctx, width2 - 47, height - 262, best, null, 10);
     } else {
         s_numberB.draw(ctx, null, 20, score, width2);
     }
