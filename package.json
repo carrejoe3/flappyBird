@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,9 @@
   "homepage": "https://github.com/carrejoe3/flappyBird#readme",
   "dependencies": {
     "webpack": "^5.74.0"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.0",
+    "webpack-cli": "^4.10.0"
   }
 }
